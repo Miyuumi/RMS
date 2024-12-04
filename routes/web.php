@@ -55,6 +55,8 @@ Route::get('/forms_get', [FormController::class, 'get']);//->middleware(['auth',
 Route::post('/forms_add', [FormController::class, 'create']);//->middleware(['auth', 'verified']);
 Route::get('/forms_edit/{id}', [FormController::class, 'view']);//->middleware(['auth', 'verified']);
 Route::get('/forms_edit/', [FormController::class, 'new']);//->middleware(['auth', 'verified']);
+Route::post('/forms_save', [FormController::class, 'save']);//->middleware(['auth', 'verified']);
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

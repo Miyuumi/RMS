@@ -16,8 +16,10 @@ return new class extends Migration
             $table->text("form_name")->nullable();
             $table->text("form_description")->nullable();
             $table->integer("template_id")->nullable();
+            $table->integer("design_uuid")->default(1)->nullable();
             $table->text("design_data")->nullable();
-            $table->text("template_data")->nullable();
+            $table->integer("created_by")->nullable();
+            $table->integer("updated_by")->nullable();
             $table->timestamps();
         });
     }

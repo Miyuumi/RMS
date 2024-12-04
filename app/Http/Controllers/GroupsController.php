@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Group;
 use App\Models\GroupUser;
+use Illuminate\Support\Facades\Auth;
 use App\Models\GroupTemplate;
 
 use Inertia\Inertia;
@@ -46,9 +47,13 @@ class GroupsController extends Controller
             $group = Group::findorfail($request->post("id"));
             if(!$group){
                 $group = new Group();
+                $group->created_by = Auth::user()->id;
+            }else{
+                $group->updated_by = Auth::user()->id;
             }
         }else{
             $group = new Group();
+            $group->created_by = Auth::user()->id;
         }
         
         $group->group_name = $request->post("group_name");

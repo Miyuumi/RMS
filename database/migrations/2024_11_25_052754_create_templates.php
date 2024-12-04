@@ -18,6 +18,8 @@ return new class extends Migration
             $table->text("template_name")->nullable();
             $table->text("template_description")->nullable();
             $table->text("template_data")->nullable();
+            $table->integer("created_by")->nullable();
+            $table->integer("updated_by")->nullable();
             $table->timestamps();
         });
     }

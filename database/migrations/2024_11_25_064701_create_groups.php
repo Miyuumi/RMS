@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->text("group_name")->nullable();
             $table->text("group_description")->nullable();
+            $table->integer("created_by")->nullable();
+            $table->integer("updated_by")->nullable();
             $table->timestamps();
         });
     }

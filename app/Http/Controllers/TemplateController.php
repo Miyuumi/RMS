@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Template;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class TemplateController extends Controller
@@ -46,9 +47,13 @@ class TemplateController extends Controller
             $template = Template::findorfail($request->post("id"));
             if(!$template){
                 $template = new Template();
+                $template->created_by = Auth::user()->id;
+            }else{
+                $template->updated_by = Auth::user()->id;
             }
         }else{
             $template = new Template();
+            $template->created_by = Auth::user()->id;
         }
         
         $template->template_name = $request->post("template_name");
