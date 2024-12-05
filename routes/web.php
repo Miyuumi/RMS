@@ -5,6 +5,7 @@ use App\Http\Controllers\GroupsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\FormDataController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -52,11 +53,18 @@ Route::get('/forms', [FormController::class, 'index'])->middleware(['auth', 'ver
 Route::get('/forms_find/{id}', [FormController::class, 'find']);//->middleware(['auth', 'verified']);
 Route::get('/forms_delete/{id}', [FormController::class, 'delete']);//->middleware(['auth', 'verified']);
 Route::get('/forms_get', [FormController::class, 'get']);//->middleware(['auth', 'verified']);
+Route::get('/forms_group', [FormController::class, 'group']);//->middleware(['auth', 'verified']);
 Route::post('/forms_add', [FormController::class, 'create']);//->middleware(['auth', 'verified']);
 Route::get('/forms_edit/{id}', [FormController::class, 'view']);//->middleware(['auth', 'verified']);
 Route::get('/forms_edit/', [FormController::class, 'new']);//->middleware(['auth', 'verified']);
 Route::post('/forms_save', [FormController::class, 'save']);//->middleware(['auth', 'verified']);
 
+
+Route::get('/record/{id}', [FormDataController::class, 'index'])->middleware(['auth', 'verified'])->name('record');
+Route::post('/record_add', [FormDataController::class, 'create']);//->middleware(['auth', 'verified']);
+Route::post('/record_del', [FormDataController::class, 'delete']);//->middleware(['auth', 'verified']);
+Route::get('/record_get/{id}', [FormDataController::class, 'get']);//->middleware(['auth', 'verified']);
+Route::get('/record_template/{id}', [FormDataController::class, 'template']);//->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

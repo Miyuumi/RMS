@@ -8,7 +8,8 @@ import { ref } from 'vue';
 const form_list = ref([]);
 const template_list = ref([]);
 var form_ctr = 0
-const open_modal = ref(false)
+const open_modal = ref(false);
+const view_modal = ref(false);
 const form_id = ref("")
 const form_name = ref("")
 const form_description = ref("")
@@ -16,10 +17,47 @@ const form_template = ref(0)
 const form_data = ref([])
 
 
-const check_out = (e) => {
+const edit_form = (e) => {
     var set_id = e.target.id.replaceAll("save_","");
     window.location.href = "/forms_edit/" + set_id;
 }
+
+const check_out = (e) => {
+    var custom_form = {};
+    var form_id = e.target.id.replaceAll("pre_","");
+    // document.getElementById("modal_view").innerHTML = "";
+    edit_show_modal();
+    axios.get("/forms_find/"+form_id).then(res=>{    
+        if(res.data.design_data){
+            custom_form = JSON.parse(res.data.design_data);
+            document.getElementById("modal_view").appendChild(commit_element(custom_form));
+        }
+    });
+    
+}
+
+const edit_show_modal = () => {
+    view_modal.value = !view_modal.value;
+}
+
+const commit_element = (elem) => {
+    var elem_row = document.createElement(elem.object);
+    elem_row.setAttribute("class",elem.class);
+    elem_row.setAttribute("name",elem.name);
+    elem_row.setAttribute("id",elem.uuid);
+    elem_row.style.cssText = elem.style;
+
+    elem.child.forEach((rows)=>{
+        elem_row.appendChild(commit_element(rows));
+    });
+
+    if(elem.child.length == 0){
+        elem_row.innerHTML = elem.value;
+    }
+
+    return elem_row;
+}
+
 
 const delete_form = (e) => {
     form_id.value = e.target.id.replace("delete_","");
@@ -76,10 +114,25 @@ axios.get("/template_get").then(res=>{
         </template>
 
         <div class="py-12">
-            <div class="max-w-7xl sm:px-6 lg:px-8">
+            <div class="max-w-8xl sm:px-6 lg:px-8">
                 <div
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
+                <Modal :show="view_modal">
+                        <div class="flex justify-between p-3">
+                            <div></div>
+                            <button :onclick="edit_show_modal" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">X</button>
+                        </div>
+                        <form>
+                            <div id="modal_view">
+
+                            </div>
+                            <div class="flex justify-end p-3">
+                            <button disabled class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
+                            <button disabled class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Cancel</button>
+                        </div>
+                        </form>
+                    </Modal>
                 <Modal :show="open_modal">
                         <div class="p-6">
                             <div class="flex justify-between">
@@ -129,7 +182,8 @@ axios.get("/template_get").then(res=>{
                                         <td>{{ data.form_name }}</td>
                                         <td>{{ data.form_description }}</td>
                                         <td>
-                                            <button :id="'save_'+data.id" :onclick="check_out" class="m-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">View</button>
+                                            <button :id="'pre_'+data.id" :onclick="check_out" class="m-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Preview</button>
+                                            <button :id="'save_'+data.id" :onclick="edit_form" class="m-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Edit</button>
                                             <button :id="'delete_'+data.id" :onclick="delete_form" class="m-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Delete</button>
                                         </td>
                                         

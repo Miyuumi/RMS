@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Form;
+use App\Models\FormData;
+use App\Models\GroupUser;
+use App\Models\GroupTemplate;
+
 
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +46,33 @@ class FormController extends Controller
         return Form::get();
     }
 
+    public function group()
+    {
+        //
+        $groups = GroupUser::where("user_id",Auth::user()->id)->get();
+        $allowed_template = array();
+        foreach($groups as $group){
+            $templates = GroupTemplate::where("group_id",$group->id)->first();
+            if($templates){
+                array_push($allowed_template, $templates->template_id);    
+            }
+        }
+        
+        $allowed_form = Form::where("template_id",$allowed_template[0]);
+        $ctr = 0;
+        foreach($allowed_template as $temp){
+            if($ctr == 0){
+                $ctr += 1;
+            }else{
+                $allowed_form = $allowed_form->orWhere("template_id",$temp);
+            }
+        }
+
+        
+        return $allowed_form->get();
+        // return Form::get();
+    }
+
     public function find($id)
     {
         //
@@ -68,6 +99,7 @@ class FormController extends Controller
         $form->form_description = $request->post("form_description");
         $form->template_id = $request->post("template_id");
         
+        $form_data->save();
         $form->save();
 
         return $form;
